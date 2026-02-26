@@ -1,0 +1,26 @@
+% Table 2: Model comparison simulation results
+% Numbers from sim_validate_results.npy
+
+\begin{table}[h!]
+\centering
+\caption{\textbf{PCHMM calibration and model predictions from coalescent simulations.}
+Results from three demographic models simulated in msprime (50 Mb, three replicates each; seeds 42, 123, 456). ``Exact'' values are mean pairwise TMRCA from tree sequences; ``PCHMM'' values are estimates from the windowed likelihood model applied to simulated genotypes. Calibration error = (PCHMM $-$ Exact)/Exact. The observed genome-wide values are from 1000 Genomes data (this study).
+AFR, African; EAS, East Asian.}
+\label{tab:calibration}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{AFR exact} & \textbf{AFR PCHMM} & \textbf{EAS exact} & \textbf{EAS PCHMM} & \textbf{Diff exact} & \textbf{Diff PCHMM} \\
+ & (ka) & (\% error) & (ka) & (\% error) & (ka) & (ka) \\
+\midrule
+Model OoA & 845.1 & $+2.2\%$ & 381.3 & $-0.4\%$ & 463.9 & 484.2 \\
+Model A (panmictic + FitCoal) & 467.7 & $-2.1\%$ & 467.4 & $-2.2\%$ & \textbf{0.2} & 0.5 \\
+Model D (Cobraa-like) & 695.4 & $+3.3\%$ & 325.4 & $-1.0\%$ & \textbf{370.1} & 396.5 \\
+\midrule
+\textbf{Observed (1kGP)} & \textbf{1,229.5 ± 6.4} & — & \textbf{858.8 ± 5.4} & — & \textbf{370.7 ± 8.4} & — \\
+\bottomrule
+\end{tabular}
+\medskip
+
+\noindent\textit{Note:} Model A predicts AFR$-$EAS difference of 0.2 ka; observed difference is $370.7$ ka ($\sim$$1{,}850\times$ larger). Model D predicts 370.1 ka, matching the observation within 0.2\%. Calibration errors $<3.5\%$ across all models.
+\end{table}

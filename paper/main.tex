@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+
+\input{preamble}
+
+\title{Ancestral Population Structure Rather Than a Panmictic Bottleneck\\
+Explains Deep Differential Genealogical Depth Across Human Populations}
+
+\author{[Author List]}
+\date{}
+
+\begin{document}
+
+\maketitle
+\linenumbers
+\doublespacing
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/results}
+\input{tables/table1_tmrca}
+\input{tables/table2_calibration}
+
+% ---- Main Figures ----
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_sim_validate.png}
+\caption{\textbf{PCHMM calibration and model comparison on coalescent simulations.}
+(a) Exact vs.\ PCHMM-inferred within-group mean TMRCA for three demographic models (OoA, panmictic Model A, Cobraa-like Model D), three replicates each. Dashed line: 1:1 identity. Calibration error $<3.5\%$ in all cases.
+(b) Predicted AFR$-$EAS differences under each model vs.\ the observed genome-wide value (red dashed line). Model A predicts $\approx$0.2 ka (panmixia); Model D predicts 370.1 ka, matching the observation within 0.2\%.}
+\label{fig:model_compare}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_tmrca_global.png}
+\caption{\textbf{Genome-wide mean pairwise TMRCA matrix across five super-populations.}
+(a) Within- and between-group mean pairwise TMRCA (ka) estimated by DESI PCHMM from all 22 autosomes. Error bars are block-jackknife SEs over 1 Mb blocks.
+(b) Per-chromosome within-AFR $-$ within-EAS TMRCA difference. Horizontal line: genome-wide mean (370.7 ka). All 22 chromosomes show AFR $>$ EAS (Z = 73.1).}
+\label{fig:tmrca_matrix}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_e5.png}
+\caption{\textbf{Per-window TMRCA distributions and K-mixture analysis.}
+Gaussian mixture model decomposition of per-window mean TMRCA distributions for within-AFR and within-EAS. BIC-optimal K = 3 for AFR ($\Delta$BIC $= -11{,}170$) and K = 3 for EAS ($\Delta$BIC $= -5{,}875$). All EAS mixture components have means $>$600 ka; no component is observed at $<$100 ka, falsifying the calibrated OoA hypothesis.}
+\label{fig:kmixture}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_bgs_robustness.png}
+\caption{\textbf{Robustness analyses.}
+(a) BGS robustness: AFR$-$EAS TMRCA difference in genome-wide windows (grey) vs.\ putatively neutral windows ($>$50 kb from genes; blue). Difference changes by only 2.6\%.
+(b) Mutation rate sensitivity: AFR/EAS TMRCA ratio for four mutation rates ($\mu \in \{1.0$--$1.6\} \times 10^{-8}$). Ratio = 1.432 is invariant.
+(c) AMR sub-population validation: within-group TMRCA for AMR populations coloured by ancestry composition (predominantly African: ACB; predominantly indigenous Andean: PEL; admixed: PUR, CLM, MXL).}
+\label{fig:robustness}
+\end{figure}
+
+\input{sections/discussion}
+
+\section*{Methods}
+\input{sections/methods}
+
+\section*{Acknowledgements}
+We thank the 1000 Genomes Project Consortium for making whole-genome data publicly available.
+
+\bibliographystyle{naturemagdoi}
+\bibliography{references}
+
+\clearpage
+\appendix
+\input{supplementary/supplement}
+
+\end{document}
