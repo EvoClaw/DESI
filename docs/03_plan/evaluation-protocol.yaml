@@ -1,0 +1,162 @@
+# Evaluation Protocol — DESI Project
+# Phase 3, M-Step 1
+# RE-LOCKED: user selected Option C — full standalone new method
+
+locked: true
+
+project: DESI
+type: H  # Hybrid (new method primary, biological discovery secondary)
+
+# ══════════════════════════════════════════════
+# PRIMARY METRICS
+# ══════════════════════════════════════════════
+
+primary_metrics:
+  - name: "log10 Bayes Factor (Model A vs. others)"
+    definition: >
+      log10[P(data | Model A) / P(data | Model X)] for each competitor.
+      Jeffreys scale: |BF| > 2 = decisive; 1-2 = strong; 0.5-1 = substantial.
+    why: Directly quantifies which demographic model best explains the ARG genealogies.
+    computation: marginal_likelihood(gLike + SINGER posterior) per model → ratio
+
+  - name: "Structure fraction at 930Ka window"
+    definition: >
+      Mixture weight of the 'long-TMRCA / structured' component in the
+      two-component TMRCA mixture model fitted to the 850Ka-1000Ka window.
+      Range [0, 1]; 0 = fully panmictic; 1 = fully structured.
+    why: Direct test — does the 930Ka window show ancestral structure (inconsistent
+         with FitCoal's panmictic assumption)?
+    computation: 2-component Gaussian mixture on log-TMRCA values → w2(t=930Ka)
+
+  - name: "Simulation model recovery rate"
+    definition: >
+      Fraction of simulated datasets (under each of 4 model classes) where
+      the pipeline selects the correct model (highest marginal likelihood).
+      Reported per model class and overall.
+    why: Validates that the method has power to distinguish the four models.
+    computation: N=50 simulations per model class × 4 = 200 total validation runs.
+
+# ══════════════════════════════════════════════
+# SECONDARY METRICS
+# ══════════════════════════════════════════════
+
+secondary_metrics:
+  - name: "Structure fraction over time curve [100Ka–2Ma]"
+    definition: >
+      Vector of structure fractions at 18 time windows (100Ka spacing from
+      100Ka to 2Ma), each with 95% bootstrap CI from 200 genome block resamples.
+    why: Novel continuous characterization of ancestral population structure.
+
+  - name: "Prior sensitivity: Bayes factor stability"
+    definition: >
+      Range of log10 Bayes factors across 5 prior settings for each model comparison.
+      Stable = max - min < 0.5 log10 units.
+    why: Required for Nature Genetics reviewer confidence in model comparison.
+
+  - name: "ARG-based TMRCA calibration"
+    definition: >
+      Correlation (Pearson r) between ARG-estimated TMRCA and known simulation
+      TMRCA at each time depth (100Ka, 250Ka, 500Ka, 750Ka, 1Ma, 1.5Ma, 2Ma).
+    why: Validates ARG accuracy at deep time scales.
+
+# ══════════════════════════════════════════════
+# EVALUATION DATASETS
+# ══════════════════════════════════════════════
+
+datasets:
+  - name: "Simulation validation set"
+    description: >
+      msprime coalescent simulations under each of 4 model classes.
+      N=50 simulation replicates × 4 models = 200 total.
+      Parameters: realistic human values (Ne=10000, mu=1.2e-8, r=1.0e-8,
+      gen_time=28yr); structured models from cobraa-style parameters.
+    purpose: Validate model recovery; calibrate structure fraction; assess power.
+    seeds: [42, 123, 456, 789, 1024, 2048, 4096, 8192, 16384, 32768]
+    # Each seed used for 5 replicates per model = 50 per model via seed + model offset
+
+  - name: "1kGP real data — main analysis"
+    description: >
+      ~200-300 phased samples selected from ~/public/1000GP/20220422_3202_phased_SNV_INDEL_SV/
+      Sample selection: ~50 per continental group (AFR, EUR, EAS, SAS, AMR).
+      Justification: SINGER memory/time constraints; 200-300 is well above saturation
+      for ARG quality (validated via downsampling from 50 to 300 samples).
+    purpose: Main GALAXY analysis — model comparison + structure fraction curve.
+
+  - name: "1kGP — continental stratification"
+    description: >
+      Separate SINGER runs for AFR-only (100 samples) and non-AFR (100 samples).
+      Tests whether structure fraction curve is consistent across continental groups.
+    purpose: Robustness — ensures result is not driven by one continental group.
+
+# ══════════════════════════════════════════════
+# STATISTICAL REPORTING STANDARDS
+# ══════════════════════════════════════════════
+
+statistical_reporting:
+  bayes_factors: "log10-scale; reported with prior sensitivity range"
+  structure_fraction: "point estimate ± 95% bootstrap CI (200 genome block resamples)"
+  simulation_recovery: "per-model % ± 95% binomial CI"
+  calibration_r: "Pearson r with 95% CI from Fisher z-transformation"
+  corrections: "None needed — each Bayes factor is a complete test; no multiple comparisons issue"
+
+# ══════════════════════════════════════════════
+# SIMULATION SEEDS
+# ══════════════════════════════════════════════
+
+simulation_seeds:
+  primary: [42, 123, 456, 789, 1024]
+  extended: [2048, 4096, 8192, 16384, 32768]
+  policy: "All seeds reported; no cherry-picking. Failed runs logged with error type."
+
+# ══════════════════════════════════════════════
+# BASELINES
+# ══════════════════════════════════════════════
+
+baselines:
+  must_include:
+    - name: FitCoal
+      citation: "Hu et al. 2023, Science"
+      source: paper_reported
+      github: "https://github.com/YunDeng98/bottleneck_demography"
+      notes: "Run on same 1kGP samples; report Ne(t) trajectory"
+      status: must_run
+
+    - name: PSMC
+      citation: "Li & Durbin 2011, Nature"
+      source: paper_reported
+      notes: "Run on 10 diploid individuals per continental group"
+      status: must_run
+
+    - name: MSMC2
+      citation: "Schiffels & Wang 2020"
+      source: paper_reported
+      notes: "Run on 8 haplotypes per continental group; cross-coalescence for structure"
+      status: must_run
+
+    - name: PHLASH
+      citation: "Terhorst 2025, Nature Genetics"
+      github: "https://github.com/jthlab/phlash"
+      source: paper_reported
+      notes: "Single-population panmictic Ne(t); GPU-accelerated; latest SOTA"
+      status: must_run
+
+    - name: Cobraa
+      citation: "Cousins, Scally, Durbin 2025, Nature Genetics"
+      source: paper_reported
+      notes: "Structured coalescent HMM; compare structure fraction with our TMRCA mixture"
+      status: must_run_or_compare_reported
+
+  pre_computed_results:
+    - method: FitCoal
+      dataset: "1kGP 2504 samples (phase 3)"
+      metric: "Ne trajectory"
+      values: "Ne min = ~1280 at 930Ka; bottleneck 813-930Ka"
+      source: paper_reported
+      compatibility: reference_only  # different 1kGP version; re-run on our phased data
+
+    - method: Cobraa
+      dataset: "1kGP 2504 samples"
+      metric: "split time, admixture time, ancestry fraction"
+      values: "split ~1.5Ma, admix ~300Ka, 80:20"
+      source: paper_reported
+      compatibility: reference_only

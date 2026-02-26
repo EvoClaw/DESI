@@ -1,0 +1,62 @@
+# ============================================================
+# Large genomic data files (1000 Genomes raw data)
+# ============================================================
+*.bed
+*.bim
+*.fam
+*.log
+*.nosex
+
+# Raw VCF / BAM / CRAM / FASTQ
+*.vcf
+*.vcf.gz
+*.bcf
+*.bam
+*.cram
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+
+# Large annotation files
+data/annotations/refGene.txt.gz
+
+# ============================================================
+# Intermediate / large result files
+# ============================================================
+# Keep .npy results (small enough), but exclude midway/preliminary duplicates
+results/midway/
+results/preliminary/
+
+# Monitor log (runtime artifact)
+results/monitor.log
+
+# ============================================================
+# LaTeX build artifacts
+# ============================================================
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/main_clean.pdf
+
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*.pyo
+.ipynb_checkpoints/
+
+# ============================================================
+# OS / Editor
+# ============================================================
+.DS_Store
+*.swp
+*.swo
+*~

@@ -1,0 +1,106 @@
+# Research Anchor — Phase 0
+# Status: DRAFT — awaiting user confirmation
+
+project_title: "A New Method for Deep Human Paleodemographic Inference: Beyond the 100K–1M Year Horizon"
+
+domain: "Population Genetics / Human Evolutionary Genomics"
+subdomain: "Deep-time paleodemographic inference (100K–2M years BP)"
+
+research_type: "H"  # DRAFT — Hybrid: new method + domain discovery
+research_type_rationale: >
+  User wants to (1) develop a new computational/statistical method for demographic inference
+  in the deep-time range (100K–2M years ago) where SFS-based (e.g. PSMC, MSMC, FitCoal)
+  methods have limited resolution, AND (2) use it to make novel discoveries about human
+  prehistory potentially including or extending the 930Ka bottleneck finding.
+  Both method novelty and biological discovery are expected contributions → Type H.
+
+expert_persona: "Senior Professor in Human Population Genetics and Computational Evolutionary Biology"
+reviewer_focus:
+  - Comparison against FitCoal, PSMC, MSMC2 as primary baselines on both simulated and real data
+  - Statistical calibration: can the method recover known demographic events (e.g., Out-of-Africa ~60Ka, archaic introgression)?
+  - Deep-time resolution: rigorous uncertainty quantification for events >500Ka
+  - Biological plausibility: do inferred events align with fossil/archaeological record?
+  - Exclusion of alternative explanations (selection, mutation rate misspecification, phasing errors)
+  - Reproducibility on 1000 Genomes data with population stratification handling
+
+benchmark_motivation: >
+  Hu et al. 2023 (Science) used FitCoal to identify a ~930Ka bottleneck reducing ancestral
+  human Ne to ~1,280 individuals over ~117Ka. The bottleneck timing coincides with the
+  Middle Pleistocene Transition (MPT) and potential origin of the last common ancestor of
+  Homo sapiens + Neanderthals + Denisovans. Extending or challenging this finding with a
+  methodologically independent approach is the core biological motivation.
+
+data:
+  status: "Have data"
+  description: >
+    1000 Genomes Project Phase 3 — LD-pruned to 1,000,000 SNPs (PLINK bed/bim/fam format).
+    N=3,202 individuals. Sample metadata available (population labels in samples.info).
+  populations_available: "Full 1kGP panel — 26 populations across 5 continental groups"
+  notes: >
+    LD pruning removes linkage information. For methods requiring haplotype structure or
+    IBD/coalescent tract lengths, may need phased VCF or additional data.
+
+resources:
+  compute: "8x NVIDIA L20 GPUs + 128-thread CPU"
+  compute_budget: "Substantial — L20 is a 48GB VRAM data-center GPU; 8x provides ~384GB VRAM total"
+  submission_deadline: "Nature Genetics (no hard deadline specified; top-tier journal, ~6–12 month review cycle)"
+
+target_venue: "Nature Genetics"
+venue_tier: "Top-tier (Nature family)"
+venue_focus: >
+  Nature Genetics expects: (1) a clear genomic/genetic mechanism, (2) human-relevant biology,
+  (3) large-scale data, (4) rigorous statistical methods with reproducibility, and
+  (5) a surprising or paradigm-shifting finding. The 930Ka bottleneck paper was in Science —
+  this means we need to either significantly extend, challenge, or complement that finding
+  with a novel method to justify Nature Genetics.
+
+confirmed_by_user: true
+
+phase2_validation:
+  status: "PASSED — 2 rounds, convergence reached"
+  final_research_question: >
+    Using SINGER-inferred ARGs from phased 1kGP whole-genome sequences (~200-300 samples
+    selected across continental groups), can we: (1) formally compare Bayesian model evidence
+    for four competing deep-time demographic models [A: panmictic+severe-bottleneck-930Ka,
+    B: panmictic+no-bottleneck, C: two-pop-structured+no-bottleneck,
+    D: two-pop-structured+lineage-specific-bottleneck (Cobraa-like)] using genealogical
+    likelihoods from gLike on ~1Mb-spaced approximately-independent marginal trees, with
+    prior sensitivity analysis and simulation validation; and (2) produce a 'structure
+    fraction over time' curve by fitting a two-component Gaussian mixture model to
+    genome-wide TMRCA distributions in 100Ka windows from 100Ka to 2Ma, first validated
+    on coalescent simulations — thereby providing the first ARG-based genealogy-grounded
+    characterization of ancestral population structure across the Middle Pleistocene?
+  agent_verdicts:
+    round2:
+      professor: "PASS"
+      editor: "CONDITIONAL PASS"
+      scientist: "CONDITIONAL PASS"
+  open_conditions_for_phase3:
+    - "Marginal likelihood estimation: harmonic mean is unstable; plan bridge sampling or thermodynamic integration as validation"
+    - "Sample size justification: document why 200-300 samples used vs full 3202 (SINGER compute + representativeness)"
+    - "Tree independence: verify ~1Mb spacing is sufficient via autocorrelation check"
+  key_correction_made: >
+    Cobraa framing corrected: Cobraa DOES find a bottleneck in the major ancestral lineage
+    after divergence. The 4 models now correctly include structured+lineage-bottleneck as
+    Model D. SINGER is CPU-only; GPUs allocated to msprime simulation and SBI components.
+  project_intent_primary: "Discovery"
+  project_intent_secondary: "Quality/Method"
+  venue_confirmed: "Nature Genetics — conditions met if results are decisive"
+
+selected_direction:
+  name: "DESI"
+  full_name: "Deep-time Evolutionary Structure Inference"
+  supersedes: "GALAXY (retired — user chose C: full standalone new method)"
+  selected_by_user: true
+  core_question: >
+    Can SINGER-inferred ARGs from ~200-400 diverse 1kGP samples enable:
+    (1) Formal Bayes factor comparison between 4 competing deep-time demographic models
+    (panmictic+bottleneck, panmictic+no-bottleneck, structured+no-bottleneck, structured+bottleneck)
+    via gLike likelihoods, AND (2) a novel "structure fraction over time" curve produced by
+    fitting nonparametric mixture models to genome-wide TMRCA distributions per 100Ka window?
+  target_finding: >
+    Formally resolve the FitCoal vs. Cobraa controversy (930Ka bottleneck vs. structured ancestry)
+    and produce a continuous characterization of deep ancestral population structure from 100Ka to 2Ma.
+  key_tools: [SINGER, gLike, msprime (simulations), PHLASH (baseline), FitCoal (baseline), Cobraa (baseline)]
+  data_needed: "Phased 1kGP VCF — ALREADY AVAILABLE at ~/public/1000GP/20220422_3202_phased_SNV_INDEL_SV/ (chr1-chr22, phased SNV+INDEL+SV panel, all 3202 samples, tabix-indexed)"
+  primary_baselines: [FitCoal, PSMC, MSMC2, PHLASH, Cobraa]
