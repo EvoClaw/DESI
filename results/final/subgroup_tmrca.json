@@ -1,0 +1,156 @@
+{
+  "within-AFR (all sub)": {
+    "label": "within-AFR (all sub)",
+    "n_pairs": 244200,
+    "mean_ka": 1240.6,
+    "median_ka": 1271.4,
+    "se_ka": 0.16
+  },
+  "within-EAS (all sub)": {
+    "label": "within-EAS (all sub)",
+    "n_pairs": 107800,
+    "mean_ka": 867.7,
+    "median_ka": 834.3,
+    "se_ka": 0.19
+  },
+  "within-EUR (all sub)": {
+    "label": "within-EUR (all sub)",
+    "n_pairs": 68640,
+    "mean_ka": 927.6,
+    "median_ka": 926.9,
+    "se_ka": 0.24
+  },
+  "within-SAS (all sub)": {
+    "label": "within-SAS (all sub)",
+    "n_pairs": 52360,
+    "mean_ka": 961.6,
+    "median_ka": 926.9,
+    "se_ka": 0.31
+  },
+  "within-AMR (all sub)": {
+    "label": "within-AMR (all sub)",
+    "n_pairs": 38280,
+    "mean_ka": 991.4,
+    "median_ka": 1029.9,
+    "se_ka": 0.49
+  },
+  "within-YRI": {
+    "label": "within-YRI",
+    "n_pairs": 16720,
+    "mean_ka": 1228.6,
+    "median_ka": 1271.4,
+    "se_ka": 0.72
+  },
+  "within-LWK": {
+    "label": "within-LWK",
+    "n_pairs": 0,
+    "mean_ka": null,
+    "median_ka": null,
+    "se_ka": null
+  },
+  "within-GWD": {
+    "label": "within-GWD",
+    "n_pairs": 16720,
+    "mean_ka": 1227.3,
+    "median_ka": 1271.4,
+    "se_ka": 0.72
+  },
+  "within-MSL": {
+    "label": "within-MSL",
+    "n_pairs": 9240,
+    "mean_ka": 1249.6,
+    "median_ka": 1271.4,
+    "se_ka": 0.78
+  },
+  "within-ESN": {
+    "label": "within-ESN",
+    "n_pairs": 16720,
+    "mean_ka": 1235.2,
+    "median_ka": 1271.4,
+    "se_ka": 0.59
+  },
+  "within-CHB": {
+    "label": "within-CHB",
+    "n_pairs": 16720,
+    "mean_ka": 863.3,
+    "median_ka": 834.3,
+    "se_ka": 0.49
+  },
+  "within-JPT": {
+    "label": "within-JPT",
+    "n_pairs": 9240,
+    "mean_ka": 859.6,
+    "median_ka": 834.3,
+    "se_ka": 0.64
+  },
+  "within-CHS": {
+    "label": "within-CHS",
+    "n_pairs": 9240,
+    "mean_ka": 868.9,
+    "median_ka": 834.3,
+    "se_ka": 0.7
+  },
+  "within-CEU": {
+    "label": "within-CEU",
+    "n_pairs": 16720,
+    "mean_ka": 923.0,
+    "median_ka": 926.9,
+    "se_ka": 0.49
+  },
+  "within-TSI": {
+    "label": "within-TSI",
+    "n_pairs": 16720,
+    "mean_ka": 928.3,
+    "median_ka": 926.9,
+    "se_ka": 0.49
+  },
+  "within-FIN": {
+    "label": "within-FIN",
+    "n_pairs": 0,
+    "mean_ka": null,
+    "median_ka": null,
+    "se_ka": null
+  },
+  "cross-sub-AFR": {
+    "label": "cross-sub within AFR",
+    "n_pairs": 184800,
+    "mean_ka": 1242.9,
+    "median_ka": 1271.4,
+    "se_ka": 0.17
+  },
+  "AFR_all": {
+    "label": "AFR all (mixed)",
+    "n_pairs": 244200,
+    "mean_ka": 1240.6,
+    "median_ka": 1271.4,
+    "se_ka": 0.16
+  },
+  "AFR_same_sub": {
+    "label": "AFR same-sub only",
+    "n_pairs": 59400,
+    "mean_ka": 1233.3,
+    "median_ka": 1271.4,
+    "se_ka": 0.35
+  },
+  "AFR_cross_sub": {
+    "label": "AFR cross-sub only",
+    "n_pairs": 184800,
+    "mean_ka": 1242.9,
+    "median_ka": 1271.4,
+    "se_ka": 0.17
+  },
+  "EAS_all": {
+    "label": "EAS all (mixed)",
+    "n_pairs": 107800,
+    "mean_ka": 867.7,
+    "median_ka": 834.3,
+    "se_ka": 0.19
+  },
+  "EAS_same_sub": {
+    "label": "EAS same-sub only",
+    "n_pairs": 35200,
+    "mean_ka": 863.8,
+    "median_ka": 834.3,
+    "se_ka": 0.34
+  }
+}

@@ -1,37 +1,25 @@
-% Table 1: Per-group mean TMRCA summary
-% All numbers from e_bgs_results.npy
+% Table 1: Within-group mean pairwise TMRCA across super-populations
 
-\begin{table}[h!]
+\begin{table}[htbp]
 \centering
-\caption{\textbf{Genome-wide mean pairwise TMRCA across population groups.}
-Mean within-group and between-group pairwise TMRCA estimates derived from all 22 autosomes using DESI PWL. Values are the average over all valid 100 kb genomic windows (N = 27,507 per group). Standard errors are block-jackknife SEs over 1 Mb blocks.
-AFR, African; EAS, East Asian; EUR, European; SAS, South Asian; AMR, admixed American.}
+\caption{\textbf{Within-group mean pairwise TMRCA across super-populations.}
+All estimates are from DESI PWL applied to 240 phased whole genomes from the 1000 Genomes Project, spanning all 22 autosomes. SE values are block-jackknife standard errors over 1 Mb genomic blocks.}
 \label{tab:tmrca_means}
-\small
-\begin{tabular}{lccc}
+\begin{tabular}{lrrr}
 \toprule
-\textbf{Population group} & \textbf{Mean TMRCA (ka)} & \textbf{Jackknife SE (ka)} & \textbf{N windows} \\
+\textbf{Population} & \textbf{Within-group TMRCA (ka)} & \textbf{SE (ka)} & \textbf{$n$} \\
 \midrule
-\multicolumn{4}{l}{\textit{Within-group comparisons}} \\[2pt]
-Within-AFR  & 1,229.5 & 6.4  & 27,507 \\
-Within-SAS  &   984.8 & 5.6  & 27,507 \\
-Within-AMR  &   950.2 & 5.6  & 27,507 \\
-Within-EUR  &   920.2 & 5.5  & 27,507 \\
-Within-EAS  &   858.8 & 5.4  & 27,507 \\
+AFR (African)       & 1{,}229.5 & 6.4 & 48 \\
+EAS (East Asian)    &   858.8  & 5.4 & 48 \\
+EUR (European)      &   920.2  & 5.5 & 48 \\
+SAS (South Asian)   &   984.8  & 5.6 & 48 \\
+AMR (Admixed American) &  950.2  & 5.6 & 48 \\
 \midrule
-\multicolumn{4}{l}{\textit{Between-group comparisons}} \\[2pt]
-AFR$\times$AMR & 1,237.8 & 6.6 & 27,507 \\
-AFR$\times$EAS & 1,237.7 & 6.6 & 27,507 \\
-AFR$\times$SAS & 1,237.0 & 6.5 & 27,507 \\
-AFR$\times$EUR & 1,235.2 & 6.5 & 27,507 \\
-SAS$\times$AMR &   994.6 & 5.7 & 27,507 \\
-EAS$\times$SAS &   989.2 & 5.7 & 27,507 \\
-EAS$\times$EUR &   991.4 & 5.8 & 27,507 \\
-EUR$\times$SAS &   973.3 & 5.6 & 27,507 \\
-EUR$\times$AMR &   962.3 & 5.6 & 27,507 \\
-EAS$\times$AMR &   972.0 & 5.7 & 27,507 \\
-\midrule
-\textbf{Within-AFR $-$ Within-EAS} & \textbf{370.7} & \textbf{8.4} & — \\
+\multicolumn{4}{l}{\textit{AFR $-$ EAS difference}} \\
+\multicolumn{1}{l}{AFR $-$ EAS} & 370.7 & 8.4 & --- \\
 \bottomrule
 \end{tabular}
+\medskip
+
+\noindent\textit{Note:} AFR includes YRI, LWK, GWD, MSL, ESN sub-populations; EAS includes CHB, JPT, CHS, CDX, KHV.
 \end{table}

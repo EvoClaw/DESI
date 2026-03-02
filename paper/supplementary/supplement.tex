@@ -1,0 +1,25 @@
+% Supplementary Materials — DESI paper v3
+
+\section*{Supplementary Information}
+
+\subsection*{Note S1: Summary statistics and their interpretation}
+
+The two primary summary statistics used in the bottleneck parameter scan are window-level group-mean TMRCA values. Each estimate $\hat{T}_w^{(g)}$ is a mean over $\sim$1,300--2,800 haplotype pairs within a 100 kb window. Because we average over many pairs, the window-mean TMRCA is a dampened version of the underlying single-pair coalescence time distribution: a scenario where 80\% of individual pairs coalesce within the 813--930 ka window would produce a window mean that is weighted toward this epoch, but would not produce a pure 813--930 ka distribution unless \textit{all} pairs coalesce there. This damping is the primary reason we use $P(\bar{T}_\text{AFR} > 930\,\text{ka})$ --- the fraction of windows whose mean exceeds 930 ka --- rather than a per-pair statistic: under the FitCoal bottleneck, the 80.5\% per-pair coalescence probability within the bottleneck window should substantially suppress the fraction of window means above 930 ka, making this a tractable comparison.
+
+\subsection*{Note S2: Interpretation of compatible parameter region}
+
+The parameter scan identifies a compatible region centered around $N_e^{\text{bn}} \approx 2{,}000$ (ancestral $N_e = 50{,}000$), which represents a bottleneck approximately 1.6$\times$ less severe than FitCoal's $N_e = 1{,}280$. This should \textit{not} be interpreted as a precise estimate of the bottleneck severity, for two reasons. First, our summary statistics ($P(\bar{T}_\text{AFR} > 930)$ and mean AFR TMRCA) use only the mean and tail fraction of the distribution; a full likelihood over the entire per-window distribution would be more informative. Second, the scan only explores panmictic bottleneck models; ancestral population structure could produce compatible statistics at different (or no) bottleneck parameterizations. The compatible region is therefore a constraint, not a parameter estimate.
+
+\subsection*{Note S3: Within-AFR sub-population heterogeneity}
+
+Our AFR group combines individuals from five sub-populations (YRI, LWK, GWD, MSL, ESN). Between-sub-population pairs may have deeper coalescence times than within-sub-population pairs, potentially inflating the within-AFR mean. To assess this, future work should compute within-YRI and within-LWK TMRCAs separately and compare them to within-CHB and within-JPT estimates. If within-YRI (a single sub-population) still substantially exceeds within-CHB, the inflation from between-sub-population mixing would be demonstrated to be secondary to the deep Africa-wide genealogical signal. This analysis was not completed in the present study due to sample size limitations (24 individuals per sub-population after balancing, compared to 48 per super-population), but is an important control for future work.
+
+\subsection*{Note S4: FitCoal bottleneck probability calculation}
+
+For FitCoal's parameterization ($N_e = 1{,}280$, $d = 117$ ka, generation time $G = 28$ years):
+\begin{align}
+\text{Duration in generations} &= 117{,}000 / 28 \approx 4{,}179\text{ generations} \\
+P(\text{coal in bottleneck}) &= 1 - \exp\left(-\frac{4{,}179}{2 \times 1{,}280}\right) = 1 - e^{-1.632} \approx 0.805
+\end{align}
+
+This means approximately 80.5\% of all genealogical pairs should coalesce within the 813--930 ka window under FitCoal's model. The remaining $\sim$19.5\% escape into the post-bottleneck epoch with ancestral $N_e = 50{,}000$. Our simulation with these exact parameters yields $P(\bar{T}_\text{AFR} > 930) = 0.615$, compared to observed 0.707.

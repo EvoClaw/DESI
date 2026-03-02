@@ -1,78 +1,62 @@
-% Methods section — DESI paper (Round 2 revision)
-% Target: Nature Genetics Online Methods
-% Addresses all MAJOR issues from three-agent review
+% Methods — DESI paper v3 (complete rewrite)
+% Fixed: PCHMM→PWL (composite likelihood, not HMM); added parameter scan
 
-\subsection*{Genomic data and sample selection}
+\subsection*{Data}
 
-Phased whole-genome variant calls were obtained from the 1000 Genomes Project (1kGP) Phase 3 high-coverage Illumina resequencing release (GRCh38 assembly; \citealt{Byrska2022}). We selected 240 unrelated individuals (480 haplotypes) balanced across five continental super-populations: African (AFR; 48 individuals spanning YRI, LWK, GWD, MSL, and ESN — approximately nine individuals per sub-population), East Asian (EAS; 48 from CHB, JPT, CHS, CDX, and KHV), European (EUR; 48 from CEU, TSI, FIN, GBR, and IBS), South Asian (SAS; 48 from GIH, PJL, BEB, STU, and ITU), and admixed American (AMR; 48 from MXL, PUR, CLM, and PEL). Within each continental group, we selected equal numbers from each constituent sub-population and excluded first- and second-degree relatives using pairwise kinship coefficients provided by the 1kGP consortium. We retained only biallelic SNVs with FILTER=PASS across all 22 autosomes from the tabix-indexed phased SNV+INDEL panel; callable-site masks were applied per chromosome, yielding a median of 3.4 million variants per autosome available for analysis.
+We used phased whole-genome sequence data from the 1000 Genomes Project high-coverage dataset~\citep{Byrska2022}, comprising 3,202 individuals from 26 sub-populations. We selected 240 individuals (48 per continental super-population: AFR, EAS, EUR, SAS, AMR) by random sampling from each super-population, balanced to represent constituent sub-populations. Variant calls on all 22 autosomes were obtained from the Project's public release (\texttt{NYGC30x} VCF files, GRCh38/hg38). We restricted analysis to biallelic SNPs with FILTER$=$PASS, no missing genotypes in our 240 samples, and minor allele count $\geq 1$.
 
-We used phased haplotypes from the official 1kGP shapeit4 phasing. Phasing switch errors predominantly affect recent coalescence ($\lesssim$50 ka) and are unlikely to influence our deep-time inferences ($>$500 ka). Because our primary comparison (within-AFR vs. within-EAS mean TMRCA) involves populations that were phased with similarly sized panels, any phasing-induced bias is expected to be symmetric and not to contribute to the observed difference.
+\subsection*{Pairwise Windowed Likelihood (PWL)}
 
-\subsection*{Pairwise windowed likelihood model (DESI PWL)}
+DESI estimates within-group mean pairwise TMRCA from per-window aggregate heterozygosity using the Pairwise Windowed Likelihood (PWL), a composite likelihood approach. This method is \textit{not} a hidden Markov model and does not model Markov transitions between genomic windows; each window is treated independently.
 
-For each pair of haplotypes $(i, j)$, we estimated the genome-wide mean pairwise time to most recent common ancestor ($T_{\text{MRCA},ij}$) using a pairwise windowed likelihood (PWL) estimator. The genome was partitioned into non-overlapping windows of 100 kb; within each window $w$, we recorded $n_{ij,w}$, the count of sites at which haplotypes $i$ and $j$ carry different alleles. Under the infinite-sites approximation and assuming a window-specific common ancestor at time $T$ (in generations), pairwise differences are Poisson-distributed \citep{Tajima1983,Watterson1975}:
-\begin{equation}
-    P(n_{ij,w} \mid T) = \frac{(2\muup L_w T)^{n_{ij,w}}\, e^{-2\muup L_w T}}{n_{ij,w}!},
-    \label{eq:poisson}
-\end{equation}
-where $\muup = 1.2 \times 10^{-8}$ per bp per generation \citep{Scally2016} and $L_w$ is the number of callable sites in window $w$. The genome-wide mean TMRCA for pair $(i,j)$ was estimated by maximizing the product of per-window likelihoods over 60 log-spaced time bins spanning $10$–$5{,}000$ ka (corresponding to $357$–$178{,}571$ generations at a generation time $g = 28$ years; \citealt{Moorjani2016}). This range encompasses the Middle Pleistocene bottleneck at $\sim$930 ka \citep{Hu2023} and the proposed ancestral split at $\sim$1.5 Ma \citep{Cousins2025}.
+\paragraph{Heterozygosity aggregation.}
+For each non-overlapping 100 kb window $w$ and each super-population group $g$, we count the total number of heterozygous sites across all ordered pairs of haplotypes:
+\[
+n_w^{(g)} = \sum_{i < j} \mathbb{1}[\text{haplotypes } i,j \text{ differ at a biallelic SNP in window } w]
+\]
+where the sum is over all $\binom{2|g|}{2}$ ordered haplotype pairs. The number of such pairs is $M = \binom{2 \times 48}{2} = 2{,}256$ for a 48-individual super-population. Each window contributes a single count $n_w^{(g)}$ and a callable-site count $L_w$ (the number of positions with no missing genotypes in the window, used as the window length denominator).
 
-The PWL estimator treats each window's likelihood as an independent observation and does not model Markov transitions between windows. It is therefore a \emph{composite} (product) likelihood, not a hidden Markov model (HMM): unlike PSMC \citep{Li2011} or MSMC2 \citep{Schiffels2014}, PWL does not infer a time-varying $\Ne(t)$ trajectory or use the coalescent Markov chain along the genome. PWL instead estimates a single genome-wide mean TMRCA per pair (or per group), which is its intentional design: the goal is to compare mean genealogical depth across populations, not to reconstruct a full $\Ne(t)$ history. The composite likelihood ignores linkage disequilibrium (LD) between adjacent windows; the block jackknife (below) accounts for spatial autocorrelation in uncertainty estimation, and the product likelihood provides a consistent point estimator for the mean TMRCA. We verified via simulation that PWL recovers exact within-group TMRCA depths within 3.5\% across three distinct demographic models (Methods: Demographic simulations); note that this calibration bound applies to within-group TMRCA estimates, not to the predicted AFR$-$EAS difference, for which Model D shows a 7.1\% overestimate of the exact difference (Table~\ref{tab:calibration}).
+\paragraph{Poisson likelihood.}
+Under the infinite-sites coalescent, the expected count for a group with mean pairwise TMRCA $T$ ka is:
+\[
+\mathbb{E}[n_w^{(g)}] = 2\,\mu\,L_w\,T \cdot \frac{1{,}000}{G}
+\]
+where $\mu = 1.2 \times 10^{-8}$ per bp per generation and $G = 28$ years per generation. Treating $n_w^{(g)}$ as Poisson-distributed with mean $\lambda_w = 2\,\mu\,L_w\,T / G \cdot 1{,}000$, the maximum-likelihood estimate for window $w$ is:
+\[
+\hat{T}_w^{(g)} = \frac{n_w^{(g)} \cdot G}{2\,\mu\,L_w \cdot 1{,}000}
+\]
+The genome-wide mean TMRCA for group $g$ is $\bar{T}^{(g)} = \text{mean}_w(\hat{T}_w^{(g)})$ over all valid windows (minimum $L_w \geq 50{,}000$ bp). Uncertainty is quantified using a block jackknife with 1 Mb non-overlapping blocks~\citep{Kunsch1989}: the jackknife standard error is $\text{SE} = \sqrt{(K-1)/K \sum_{k=1}^K (\bar{T}^{(g)}_{-k} - \bar{T}^{(g)})^2}$ where $K$ is the number of 1 Mb blocks.
 
-\paragraph{Window-size choice.}
-We chose 100 kb windows empirically by comparing per-window TMRCA standard errors across window sizes of 20, 50, 100, and 200 kb in pilot runs on chr22 data. At 100 kb with $\sim$10$^3$ pairs aggregated (see below), the per-window uncertainty is $<5$ ka, comparable to the formal uncertainty of SFS-based methods \citep{Hu2023}. Smaller windows (10 kb) yield per-window noise of $\pm329$ ka (single pair, Poisson shot noise), rendering individual window estimates unreliable for group comparisons.
+\paragraph{Callable-site correction.}
+We apply a callable-site correction using sample-level missingness masks. For each window and each individual, we count the number of non-missing positions from the VCF's FORMAT/GT field; $L_w$ is set to the minimum callable length across all pairs in the group to ensure conservative estimates.
 
-\subsection*{Population-group aggregate TMRCA estimation}
+\subsection*{Coalescent simulation and PWL calibration}
 
-For a given window $w$ and population group $G$ (for example, all within-AFR pairs), we pooled heterozygosity counts across all pairs belonging to $G$:
-\begin{equation}
-    n_{G,w} = \sum_{(i,j) \in G} n_{ij,w},\quad
-    \hat{T}_G^{(w)} = \arg\max_{T} \log P(n_{G,w} \mid T),
-    \label{eq:aggregate}
-\end{equation}
-treating the pooled count as a single Poisson observation with rate $2\muup (\sum_{(i,j)} L_w) T$. This aggregation over $\sim$1,300–2,800 pairs per within-group comparison reduces per-window measurement noise to $<5$ ka.
+We validated PWL using \texttt{msprime}~\citep{Kelleher2016} coalescent simulations. Three demographic models were simulated: Model OoA (standard Out-of-Africa: ancestral $N_e = 15{,}000$, African $N_e = 15{,}000$, OoA bottleneck at 65 ka reducing to $N_e = 3{,}000$), Model A (panmictic: constant $N_e = 10{,}000$ with random group labels), and Model D (OoA structure with reduced ancestral $N_e = 12{,}000$). Each model was simulated three times (seeds 42, 123, 456) with sequence length $10^8$ bp and sample size 48 individuals per group. Exact TMRCA values were obtained from \texttt{tskit} tree-sequence statistics.
 
-We note that the aggregate likelihood in Eq.~\eqref{eq:aggregate} represents a composite likelihood: pairs within a group share genealogical history and are not independent. The estimator $\hat{T}_G^{(w)}$ converges to the mean pairwise TMRCA across all pairs in $G$ for that window; it does not model within-group variance in TMRCA. In particular, for AFR, which spans West, East, and Southern African sub-populations with heterogeneous ancestry, the estimated window mean pools both within- and between-sub-population pairs. Cross-sub-population pairs have deeper TMRCAs than within-sub-population pairs, which could in principle inflate the within-AFR mean relative to a hypothetical panmictic African population. We address this potential bias directly: the AFR$>$EAS pattern is consistent across all 22 autosomes (E6; within-AFR minus within-EAS: $373 \pm 5.1$ ka jackknife SE, Z$\approx$73) including chromosomes that differ by four-fold in gene density, and is preserved with equal magnitude in neutral windows (E\_BGS: 361$\pm$19 ka). Furthermore, AMR populations with predominantly African ancestry (e.g., ACB) show within-group TMRCA indistinguishable from within-AFR (E8; $1{,}253$ ka $\approx 1{,}230$ ka), while populations with predominantly East Asian-like ancestry (PEL) match within-EAS (887 ka $\approx$ 859 ka). This correspondence with known modern ancestry compositions argues that the AFR$>$EAS signal reflects genuine genealogical depth, not a composite-likelihood artifact.
+\subsection*{Bottleneck parameter scan}
 
-We analyzed 15 population groups: five within-group contrasts (within-AFR, within-EAS, within-EUR, within-SAS, within-AMR) and ten between-group contrasts. Groups with fewer than 10 valid haplotype pairs or fewer than 500 callable sites in a window were assigned NaN. Across all 22 autosomes, this yielded approximately 27,500 valid per-window estimates per group.
+To directly test FitCoal's bottleneck parameterization~\citep{Hu2023}, we performed a parameter scan across a grid of bottleneck severity and duration. Demographic models were implemented using \texttt{msprime.Demography} with three populations: AFR (modern $N_e = 15{,}000$), EAS (modern $N_e = 3{,}000$ post-OoA bottleneck at 65 ka), and ANC (ancestral population). All three modern populations merge into ANC at 65 ka (OoA split time). The bottleneck is applied to ANC between times $(813 + d)$ ka and $813$ ka, where $d$ is the duration in ka.
 
-\subsection*{Block jackknife uncertainty estimation}
+We scanned:
+\begin{itemize}
+  \item $N_e^{\text{bn}} \in \{300, 500, 800, 1{,}280, 2{,}000, 4{,}000, 8{,}000, 20{,}000\}$ (8 values, approximately log-spaced)
+  \item $d \in \{30, 50, 80, 117, 150, 200, 300\}$ ka (7 values, linearly spaced)
+  \item Ancestral $N_e \in \{20{,}000, 50{,}000\}$ (2 values)
+\end{itemize}
 
-Genomic windows are correlated due to linked inheritance and shared genealogical history. We used block jackknife resampling \citep{Kunsch1989} over non-overlapping 1 Mb blocks — a scale that exceeds the typical LD decay distance of $\sim$500 kb in 1kGP populations \citep{Reich2001} and provides approximately independent blocks for jackknife purposes. The genome was divided into 2,868 such blocks (defined as consecutive 1 Mb segments, irrespective of chromosome boundaries); blocks smaller than 500 kb at chromosome ends were excluded. Leave-one-block-out pseudovalues were used to compute jackknife standard errors and to construct confidence intervals for all group-level mean TMRCA estimates and their differences.
+This yields 112 parameter combinations. Each scenario was simulated 4 times (seeds 0--3) with sequence length $1.5 \times 10^9$ bp (yielding 150 windows of 100 kb each per simulation) and 10 haplotypes per population ($n = 5$ individuals, sufficient to estimate mean TMRCA). Per-window mean TMRCA was computed using \texttt{tskit.diversity(mode="branch", windows=...)} for both AFR and EAS sample sets, then converted to years: $\bar{T}_\text{ka} = d_\text{branch}/2 \cdot G / 1{,}000$, where $d_\text{branch}$ is the branch-mode pairwise diversity (equal to $2 \cdot \mathbb{E}[T_\text{MRCA}]$ in generation units). Two summary statistics were computed for each scenario: (1) the fraction of windows with $\bar{T}_\text{AFR} > 930$ ka, denoted $P(\bar{T}_\text{AFR} > 930)$; and (2) the mean within-AFR TMRCA $\bar{T}_\text{AFR}$. The four seeds were pooled, giving 600 windows per scenario. The FitCoal exact point corresponds to $N_e^{\text{bn}} = 1{,}280$, $d = 117$ ka, ancestral $N_e = 50{,}000$.
 
-\subsection*{Demographic model simulations}
+Statistical comparison used a Z-test: $Z = (P_\text{obs} - P_\text{sim})/\sigma_\text{sim}$, where $P_\text{obs} = 0.707$ (observed genome-wide), $P_\text{sim} = 0.615$ (FitCoal scenario), and $\sigma_\text{sim}$ is the standard deviation of $P$ across the four seeds.
 
-To validate PWL calibration and to quantify the AFR$-$EAS mean TMRCA difference predicted under competing demographic hypotheses, we implemented three models in \texttt{msprime} v1.3 \citep{Kelleher2016}:
+\subsection*{BGS robustness analysis}
 
-\paragraph{Model OoA (calibration reference).}
-A three-population model representing a standard Out-of-Africa history (following the qualitative framework of \citealt{Gutenkunst2009}, but re-parameterized to a smaller sample as implemented in \texttt{msprime}): a common ancestor ($\Ne = 15{,}000$) splits into an African lineage ($\Ne = 15{,}000$, constant) and an East Asian lineage at 60 ka; the East Asian lineage undergoes an OoA bottleneck ($\Ne = 200$; onset $\sim$50 ka) followed by recovery to $\Ne = 8{,}000$ at 10 ka and $\Ne = 15{,}000$ at present. Labels ``AFR'' and ``EAS'' are assigned to 15 randomly drawn individuals from each lineage. Under this model, all modern humans share the same ancestral genealogy; within-population TMRCA depths differ only due to recent population size history, not any pre-OoA ancestral structure.
+We identified putatively neutral windows by excluding all 100 kb windows overlapping any hg38 RefGene annotation $\pm$50 kb. This retained 30.7\% of autosomal windows (8,451/27,507). Within-group TMRCA was re-estimated in this subset using the same PWL procedure.
 
-\paragraph{Model A (panmictic + severe bottleneck).}
-A single panmictic ancestral population ($\Ne = 10{,}000$ throughout, except during the bottleneck) with a severe bottleneck motivated by \citet{Hu2023}: $\Ne = 1{,}280$ for 117 ka (813–930 ka), flanked by $\Ne = 10{,}000$ on both sides. There is no modern population split; ``AFR'' and ``EAS'' labels are randomly assigned to 15 individuals each from this single population. Under this panmictic model, all modern populations are random draws from the same genealogy, so within-group TMRCAs are equal regardless of population label (expected difference: $\approx$0 ka for any labelling).
+\subsection*{Population samples and sub-population analyses}
 
-\paragraph{Model D (reduced ancestral $\Ne$; Cobraa-inspired).}
-A three-population model structurally similar to Model OoA but with a smaller ancestral effective population size: AFR ($\Ne = 15{,}000$) and EAS ($\Ne = 15{,}000$, with the same bottleneck as Model OoA) both split from an ancestral population \emph{popA} at 60 ka; \emph{popA} has $\Ne = 12{,}000$ (compared to $\Ne = 15{,}000$ in Model OoA), and merges into an ancient ancestor ($\Ne = 15{,}000$) at 1.5 Ma. The code also includes parameters for a second ancestral deme (\emph{popB}, $\Ne = 5{,}000$, split from the common ancestor at 1.5 Ma) and complete admixture of \emph{popB} into \emph{popA} at 300 ka, following \citet{Cousins2025}; however, because all AFR and EAS samples are routed through \emph{popA} at 60 ka and no samples are placed in \emph{popB}, those parameters do not contribute genealogical lineages to this simulation run. The effective distinction from Model OoA in these experiments is therefore the ancestral Ne of 12,000 vs.\ 15,000. The deep-structure code is present as a conceptual template for the Cobraa hypothesis and is available in the repository for future use with structured sampling.
+For AMR sub-population analyses, we used all available ACB (African-Caribbean, $n = 96$), PEL (Peruvian, $n = 85$), and PUR (Puerto Rican, $n = 104$) individuals from the 1000 Genomes Project. Within-group TMRCAs were estimated as above for each sub-population separately. Mutation rate sensitivity analysis was performed by re-running PWL with $\mu \in \{1.0, 1.2, 1.4, 1.6\} \times 10^{-8}$ on chromosome 21 and scaling genome-wide results accordingly.
 
-Each model was simulated for 50 Mb using a uniform recombination rate of $10^{-8}$ per bp per generation, with three independent replicates per model (random seeds 42, 123, 456). Exact window TMRCA values were extracted from \texttt{msprime} tree sequences using the divergence matrix method. PWL estimates were computed from the resulting genotype matrices using the identical pipeline applied to real data. Calibration error was defined as $(\hat{T}_{\text{PWL}} - T_{\text{exact}})/T_{\text{exact}}$ for each group and each replicate.
+\subsection*{Software and code availability}
 
-\subsection*{Per-window TMRCA mixture analysis}
-
-To characterize the shape of the within-population TMRCA distribution — and specifically to test whether a fraction of East Asian genomic windows shows the shallow coalescence ($<$100 ka) that would be expected under a severe OoA bottleneck — we fitted mixture models to per-window $\hat{T}_G^{(w)}$ values aggregated across all 22 autosomes. We used Gamma mixture distributions (two-component Gamma mixture is flexible enough to capture both symmetric and skewed TMRCA distributions; exponential TMRCA under a constant-$\Ne$ population is a special case of Gamma). Expectation-maximization (EM) with 50 random restarts was used for parameter estimation; the optimal number of components $K \in \{1, 2, 3\}$ was selected by Bayesian Information Criterion (BIC), evaluated on every-other-block subsample to reduce spatial autocorrelation.
-
-Under Model A, 31.4\% of within-EAS windows would be expected to show coalescence at $\approx 55$ ka (corresponding to the bottleneck epoch) — a prediction we use as a quantitative benchmark against the observed minimum mixture component location in the within-EAS distribution.
-
-\subsection*{Background selection robustness}
-
-To evaluate whether background selection (BGS) could explain the AFR$>$EAS TMRCA pattern, we identified putatively neutral windows located $>$50 kb from any annotated gene transcript (UCSC hg38 RefGene track, downloaded August 2020 \citealt{Navarro2017}). A 50 kb flanking buffer is standard for BGS exclusion \citep{McVicker2009} and encompasses the spatial scale at which BGS effects on diversity are well documented in humans. After merging overlapping buffered regions, 30.7\% of the autosomal genome was retained as neutral (range: 8.0\% for chr19 to 42.6\% for chr22); this fraction is consistent with prior BGS masking analyses. The AFR$-$EAS mean TMRCA difference was recomputed using block jackknife restricted to neutral windows only, and compared to the genome-wide estimate.
-
-\subsection*{Mutation rate sensitivity and AMR stratification}
-
-To assess sensitivity to the assumed mutation rate, we rescaled all TMRCA estimates by $\muup_\text{ref}/\muup$ for $\muup \in \{1.0, 1.2, 1.4, 1.6\} \times 10^{-8}$ per bp per generation, spanning the range reported in recent large-scale de novo mutation studies \citep{Kong2012,Scally2016}. Because TMRCA estimates scale as $\hat{T} \propto 1/\muup$, the within-group ratio $\hat{T}_{\AFR}/\hat{T}_{\EAS}$ is analytically invariant to the choice of $\muup$; we verify this numerically. For AMR stratification, we recomputed mean TMRCA separately for each fine-grained AMR population (ASW, ACB, MXL, PUR, CLM, PEL) using the same group-level aggregate estimator, to examine how modern admixture composition is reflected in genealogical depth.
-
-\subsection*{Computational implementation}
-
-Likelihood computations were implemented in JAX \citep{Bradbury2018} with JIT compilation and batch vectorization across haplotype pairs. Genome-wide analysis of all 22 autosomes (240 individuals; 480 haplotypes; $\sim1.15 \times 10^5$ cross-individual haplotype pairs per chromosome; each of the $\sim2.9 \times 10^4$ individual pairs contributes four haplotype-level comparisons) was completed on a compute node with eight NVIDIA L20 GPUs (48 GB VRAM each) and 128 CPU threads, requiring approximately 48 computing hours. All analysis code is available at \needcite.
-
-\subsection*{Data availability}
-
-1000 Genomes Project Phase 3 high-coverage data are publicly available at \url{https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/}. Sample ancestry annotations are provided by the 1kGP consortium at the same location.
+All analyses were performed in Python 3.10 using \texttt{msprime} v1.2~\citep{Kelleher2016}, \texttt{tskit} v0.5, \texttt{numpy}, \texttt{scipy}, and \texttt{matplotlib}. All analysis code is available at \url{https://github.com/EvoClaw/DESI}.

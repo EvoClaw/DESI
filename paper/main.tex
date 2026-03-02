@@ -2,8 +2,8 @@
 
 \input{preamble}
 
-\title{Ancestral Population Structure Rather Than a Panmictic Bottleneck\\
-Explains Deep Differential Genealogical Depth Across Human Populations}
+\title{Genome-wide Pairwise TMRCA Excess in African Populations\\
+Is Inconsistent with FitCoal's Severe $\sim$930 ka Bottleneck Parameterization}
 
 \author{[Author List]}
 \date{}
@@ -18,46 +18,58 @@ Explains Deep Differential Genealogical Depth Across Human Populations}
 \input{sections/abstract}
 \end{abstract}
 
+\noindent\textit{This paper was produced using Amplify research automation (\url{https://evoclaw.github.io/amplify}) with Claude Sonnet without manual editing of analysis or text. It is presented as a demonstration of AI-assisted research workflows and should be interpreted with appropriate scientific caution. All underlying code is available at \url{https://github.com/EvoClaw/DESI}.}
+
+\vspace{0.5em}
+
 \input{sections/introduction}
 \input{sections/results}
+
+% ---- Tables ----
 \input{tables/table1_tmrca}
 \input{tables/table2_calibration}
 
-% ---- Main Figures ----
-
+% ---- Figure 1: DESI Calibration ----
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_sim_validate.png}
-\caption{\textbf{PWL calibration and model comparison on coalescent simulations.}
-(a) Exact vs.\ PWL-inferred within-group mean TMRCA for three demographic models (OoA, panmictic Model A, Cobraa-inspired Model D with ancestral $\Ne = 12{,}000$), three replicates each. Dashed line: 1:1 identity. Calibration error $<3.5\%$ in all cases.
-(b) Predicted AFR$-$EAS differences under each model vs.\ the observed genome-wide value (red dashed line). Model A predicts $\approx$0.2 ka (panmixia); Model D predicts 370.1 ka, matching the observation within 0.2\%.}
+\caption{\textbf{PWL calibration on coalescent simulations across three demographic models.}
+(\textit{a}) Exact (tree-sequence) vs.\ PWL-inferred within-group mean TMRCA for Model OoA, Model A (panmictic), and Model D (reduced ancestral $N_e = 12{,}000$), three replicates each (seeds 42/123/456). Dashed line: 1:1 identity. Maximum calibration error: 3.5\%.
+(\textit{b}) AFR$-$EAS TMRCA difference predicted by each model vs.\ the genome-wide observed value (red dashed line, 370.7 ka). Model A (panmictic, random group labels) predicts $\approx$0.2 ka; Model OoA predicts 463.9 ka (exceeds observation); Model D (ancestral $N_e = 12{,}000$) predicts 370.1 ka, within 0.2\% of the observation.}
 \label{fig:model_compare}
 \end{figure}
 
+% ---- Figure 2: TMRCA Matrix ----
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig1_tmrca_global.png}
-\caption{\textbf{Genome-wide mean pairwise TMRCA matrix across five super-populations.}
-(a) Within- and between-group mean pairwise TMRCA (ka) estimated by DESI PWL from all 22 autosomes. Error bars are block-jackknife SEs over 1 Mb blocks.
-(b) Per-chromosome within-AFR $-$ within-EAS TMRCA difference. Horizontal line: genome-wide mean (370.7 ka). All 22 chromosomes show AFR $>$ EAS (Z = 73.1).}
+\caption{\textbf{Genome-wide mean pairwise TMRCA across five super-populations.}
+(\textit{a}) Within- and between-group mean pairwise TMRCA (ka) estimated by DESI from all 22 autosomes. Error bars: block-jackknife SEs over 1 Mb blocks.
+(\textit{b}) Per-chromosome within-AFR $-$ within-EAS TMRCA difference. Horizontal line: genome-wide mean (370.7 ka). All 22 chromosomes show AFR $>$ EAS ($Z = 73$). Note that chromosome 19, the most gene-dense autosome, shows the largest per-chromosome difference (440.0 ka), opposite to the prediction of differential background selection.}
 \label{fig:tmrca_matrix}
 \end{figure}
 
+% ---- Figure 3: Bottleneck Parameter Scan ----
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_e5.png}
-\caption{\textbf{Per-window TMRCA distributions and K-mixture analysis.}
-Gamma mixture model decomposition of per-window mean TMRCA distributions for within-AFR and within-EAS (EM with 500 iterations and 15 random restarts; BIC model selection). BIC-optimal K = 3 for AFR ($\Delta$BIC $= -11{,}170$) and K = 3 for EAS ($\Delta$BIC $= -5{,}875$). All EAS mixture components have means $>$600 ka; no component is observed at $<$100 ka, inconsistent with the calibrated OoA hypothesis (which predicts $\sim$31\% of windows at $\approx$55 ka).}
-\label{fig:kmixture}
+\includegraphics[width=\textwidth]{figures/fig_bottleneck_scan.png}
+\caption{\textbf{Bottleneck parameter scan: testing FitCoal's parameterization against multi-population TMRCA statistics.}
+Results from 112 simulated demographic scenarios spanning a grid of bottleneck severity ($N_e^{\text{bn}} = 300$--$20{,}000$) and duration (30--300 ka), with ancestral $N_e = 50{,}000$.
+(\textit{a,b}) Heatmaps of $P(\bar{T}_\text{AFR} > 930\,\text{ka})$ and mean within-AFR TMRCA across the parameter grid. Red box: FitCoal's exact parameterization ($N_e^{\text{bn}} = 1{,}280$, 117 ka). Black dashed contour (panel \textit{a}): observed $P = 0.707$. Observed AFR mean = 1,229 ka (contour in panel \textit{b}).
+(\textit{c}) Bar chart comparing FitCoal's predicted $P = 0.615$ (blue) vs.\ observed $P = 0.707$ (red); error bar is the simulation standard deviation across 4 seeds. $Z = 4.6$, $p < 0.0001$.
+(\textit{d,e}) Line plots of $P(\bar{T}_\text{AFR} > 930\,\text{ka})$ and AFR mean TMRCA vs.\ duration (ka) for selected $N_e^{\text{bn}}$ values. Red stars: FitCoal point. Observed values: horizontal dashed lines.
+(\textit{f}) Scatter of all 56 parameter combinations (ancestral $N_e = 50{,}000$): $P(\bar{T}_\text{AFR} > 930\,\text{ka})$ vs.\ AFR mean TMRCA. Red star: FitCoal. Green diamond: observed data. The FitCoal point lies to the lower-left of the observed value, indicating systematically shallower genealogies. The compatible region (shaded) is centered around $N_e^{\text{bn}} \approx 2{,}000$.}
+\label{fig:scan}
 \end{figure}
 
+% ---- Figure 4: Robustness ----
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_bgs_robustness.png}
 \caption{\textbf{Robustness analyses.}
-(a) BGS robustness: AFR$-$EAS TMRCA difference in genome-wide windows (grey) vs.\ putatively neutral windows ($>$50 kb from genes; blue). Difference changes by only 2.6\%.
-(b) Mutation rate sensitivity: AFR/EAS TMRCA ratio for four mutation rates ($\mu \in \{1.0$--$1.6\} \times 10^{-8}$). Ratio = 1.432 is invariant.
-(c) AMR sub-population validation: within-group TMRCA for AMR populations coloured by ancestry composition (predominantly African: ACB; predominantly indigenous Andean: PEL; admixed: PUR, CLM, MXL).}
+(\textit{a}) AFR$-$EAS TMRCA difference in genome-wide windows (grey) vs.\ putatively neutral windows ($>$50 kb from genes; blue). Difference is reduced by only 2.6\% (370.7 $\to$ 361.1 ka), indicating background selection does not drive the pattern.
+(\textit{b}) AFR/EAS TMRCA ratio across four mutation rates ($\mu \in \{1.0$--$1.6\} \times 10^{-8}$). Ratio = 1.432 is invariant to $\mu$, confirming mutation rate does not affect the comparison.
+(\textit{c}) Within-group TMRCA for AMR sub-populations stratified by ancestry composition. ACB (predominantly African) matches within-AFR; PEL (predominantly indigenous Andean) matches within-EAS; PUR (admixed) is intermediate. The gradient confirms DESI tracks deep genealogical ancestry rather than recent population structure.}
 \label{fig:robustness}
 \end{figure}
 
@@ -66,8 +78,13 @@ Gamma mixture model decomposition of per-window mean TMRCA distributions for wit
 \section*{Methods}
 \input{sections/methods}
 
+\section*{Data Availability}
+
+Whole-genome sequencing data from the 1000 Genomes Project are publicly available at \url{https://www.internationalgenome.org/}~\citep{Byrska2022}. All DESI analysis code, simulation scripts, and intermediate results are available at \url{https://github.com/EvoClaw/DESI}.
+
 \section*{Acknowledgements}
-We thank the 1000 Genomes Project Consortium for making whole-genome data publicly available.
+
+We thank the 1000 Genomes Project Consortium for making whole-genome data publicly available. This paper was produced using Amplify (\url{https://evoclaw.github.io/amplify}), an AI-assisted research automation framework, without manual modification of analysis scripts or manuscript text.
 
 \bibliographystyle{naturemagdoi}
 \bibliography{references}
