@@ -18,7 +18,7 @@ Results from three demographic models simulated in \texttt{msprime} (50~Mb, thre
 \midrule
 Model OoA              & 845.1 & 864.8 ($+2.2\%$) & 381.3 & 379.8 ($-0.4\%$) \\
 Model A (panmictic)    & 467.7 & 457.7 ($-2.1\%$) & 467.4 & 457.2 ($-2.2\%$) \\
-Model D (Cobraa-like)  & 695.4 & 718.7 ($+3.3\%$) & 325.4 & 322.2 ($-1.0\%$) \\
+Model D (reduced $\Ne$) & 695.4 & 718.7 ($+3.3\%$) & 325.4 & 322.2 ($-1.0\%$) \\
 \midrule
 \textbf{Observed (1kGP)} & \multicolumn{2}{c}{$\mathbf{1{,}229.5 \pm 6.4}$} & \multicolumn{2}{c}{$\mathbf{858.8 \pm 5.4}$} \\
 \bottomrule
@@ -27,15 +27,15 @@ Model D (Cobraa-like)  & 695.4 & 718.7 ($+3.3\%$) & 325.4 & 322.2 ($-1.0\%$) \\
 \medskip
 
 % --- Panel B: AFR-EAS differences ---
-\begin{tabular}{lrrl}
+\begin{tabular}{lrrc}
 \toprule
-\textbf{Model} & \textbf{Diff exact (ka)} & \textbf{Diff PCHMM (ka)} & \textbf{Interpretation} \\
+\textbf{Model} & \textbf{Diff exact (ka)} & \textbf{Diff PCHMM (ka)} & \textbf{Note} \\
 \midrule
-Model OoA             & 463.9 & 484.2 & Panmictic bottleneck only \\
-Model A (panmictic)   & \textbf{0.2}   & 0.5   & Panmixia: diff $\approx$ 0 \\
-Model D (Cobraa-like) & \textbf{370.1} & 396.5 & Structure: matches observed \\
+Model OoA              & 463.9          & 484.2 & OoA only; overpredicts \\
+Model A (panmictic)    & \textbf{0.2}   & 0.5   & Panmixia: $\approx$0 \\
+Model D (reduced $\Ne$)& \textbf{370.1} & 396.5 & Matches observed \\
 \midrule
-\textbf{Observed (1kGP)} & \multicolumn{2}{c}{$\mathbf{370.7 \pm 8.4}$} & ${\sim}1{,}850\times$ Model A prediction \\
+\textbf{Observed (1kGP)} & \multicolumn{2}{c}{$\mathbf{370.7 \pm 8.4}$} & ${\sim}1{,}850\times$ Model A \\
 \bottomrule
 \end{tabular}
 
