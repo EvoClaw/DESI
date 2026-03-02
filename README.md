@@ -7,7 +7,7 @@
 
 ## 📄 Paper
 
-**Ancestral Population Structure Rather Than a Panmictic Bottleneck Explains Deep Differential Genealogical Depth Across Human Populations**
+**Genome-wide Pairwise TMRCA Excess in African Populations Is Inconsistent with FitCoal's Severe ~930 ka Bottleneck Parameterization**
 
 > The full manuscript is available in [`paper/main.pdf`](paper/main.pdf).
 
@@ -15,38 +15,64 @@
 
 ## What is DESI?
 
-DESI (**Deep-time Evolutionary Structure Inference**) is a computational method for testing whether ancestral human populations were panmictic (single, randomly-mating) or structured (composed of distinct subpopulations) during the Middle Pleistocene (~1.0–0.5 million years ago).
+DESI (**Deep-time Evolutionary Structure Inference**) is a computational method that estimates within-group mean pairwise coalescence times (TMRCA) from windowed aggregate heterozygosity, and uses those estimates to directly test specific ancestral demographic parameterizations against empirical multi-population data.
 
 ### The core question
 
-A recent high-profile study (Hu et al. 2023, *Science*) inferred a catastrophic human population bottleneck at ~930,000 years ago, reducing our ancestors to ~1,280 individuals. This inference assumed the ancestral population was **panmictic**. DESI asks: *what if it wasn't?*
+A recent high-profile study (Hu et al. 2023, *Science*) inferred a catastrophic human population bottleneck at ~930,000 years ago, reducing our ancestors to ~1,280 individuals for ~117,000 years. DESI asks: *is this specific parameterization consistent with the observed distribution of within-group genealogical depths across modern continental populations?*
 
 ### How DESI works
 
-Under panmixia, all modern continental populations are random draws from the same ancestral genealogy — their **within-group mean pairwise coalescence times (TMRCA)** must be equal. Ancestral population structure, by contrast, produces persistent genealogical depth differences between groups.
+DESI estimates per-window mean pairwise TMRCA using a **Pairwise Windowed Likelihood (PWL)** — a composite likelihood approach (not an HMM) treating each 100 kb window independently:
 
-DESI tests this directly:
-
-1. **Per-window TMRCA estimation** — divides each chromosome into 100 kb windows and estimates the mean pairwise TMRCA for each population group using a JAX-accelerated pairwise coalescent HMM (PCHMM) with Poisson likelihood
-2. **Genome-wide comparison** — compares within-group mean TMRCAs across five continental super-populations (AFR, EAS, EUR, SAS, AMR)
-3. **Block jackknife uncertainty** — uses 1 Mb genomic blocks for robust standard errors that are genome-agnostic
+1. **Per-window heterozygosity aggregation** — counts heterozygous sites across all haplotype pairs within each population group and 100 kb window
+2. **Poisson MLE** — estimates mean pairwise TMRCA per window from aggregate counts under the infinite-sites coalescent
+3. **Block jackknife uncertainty** — uses 1 Mb genomic blocks for robust standard errors
+4. **Bottleneck parameter scan** — simulates 112 demographic scenarios (varying Ne_bottleneck and duration) using `msprime`/`tskit`, computing the same window-level statistics as the empirical data for direct comparison
 
 ### Key findings
 
-Applied to 240 individuals from the [1000 Genomes Project](https://www.internationalgenome.org/):
+Applied to 240 phased whole genomes from the [1000 Genomes Project](https://www.internationalgenome.org/):
 
 | Comparison | Mean TMRCA | Jackknife SE |
 |---|---|---|
-| Within-AFR | 1,229.5 ka | ± 6.4 ka |
+| Within-AFR (pooled) | 1,229.5 ka | ± 6.4 ka |
+| Within-YRI (single sub-population) | 1,228.6 ka | — |
 | Within-EAS | 858.8 ka | ± 5.4 ka |
+| Within-CHB (single sub-population) | 863.3 ka | — |
 | **AFR − EAS** | **370.7 ka** | **± 8.4 ka** |
+| **YRI − CHB** | **365.3 ka** | — |
 
-- **Any panmictic model predicts this difference to be ~0.2 ka** — the observed difference is ~1,850× larger (Z = 73 across all 22 autosomes)
-- A Cobraa-like structured model (two ancestral populations diverging at ~1.5 Ma, 20% admixture at ~300 ka) predicts **370.1 ka** — matching the observation within **0.2%**
-- Signal is unchanged in putatively neutral windows (2.6% change), excluding background selection as a confound
-- AMR sub-populations replicate the pattern according to their known ancestry composition
+The AFR > EAS asymmetry replicates within single sub-populations (within-YRI vs within-CHB = 365.3 ka), confirming it is not an artifact of pooling multiple African sub-populations.
 
-**Conclusion:** The ~930 ka signal in human genomic data is better explained by ancestral population structure than by a panmictic bottleneck.
+#### Three-way model comparison
+
+| Model | Predicted AFR−EAS | Direction vs. observed |
+|---|---|---|
+| Model OoA (no bottleneck, panmictic ancestry + OoA split) | **463.9 ka** | Over-predicts (+25%) |
+| FitCoal (Ne=1,280, 117 ka bottleneck) | — | Under-predicts AFR depth by 10.2% |
+| Model D (reduced ancestral Ne=12,000) | **370.1 ka** | Matches within 0.2% |
+| **Observed** | **370.7 ka** | — |
+
+The observed value sits between the no-bottleneck OoA prediction (too high) and FitCoal's severe-bottleneck prediction (too low), consistent with a genuine but moderate ancestral event.
+
+#### Direct test of FitCoal's parameterization
+
+We simulated FitCoal's exact parameters (Ne=1,280, 117 ka, ancestral Ne=50,000) and measured the same window-level statistic as the data:
+
+| Statistic | FitCoal simulation | Observed | Z | p |
+|---|---|---|---|---|
+| P(window-mean AFR TMRCA > 930 ka) | **0.615** | **0.707** | 4.6 | <0.0001 |
+| Mean within-AFR TMRCA | 1,105 ka | 1,229 ka | — | — |
+
+FitCoal's parameterization systematically under-predicts the depth of African genealogies. A parameter scan of 112 bottleneck scenarios identifies a compatible severity of **Ne ≈ 2,000** — substantially weaker than FitCoal's Ne = 1,280.
+
+#### Robustness
+- Signal unchanged in putatively neutral windows >50 kb from genes: AFR−EAS = 361.1 ka (2.6% reduction)
+- AFR/EAS TMRCA ratio (1.432) is invariant to mutation rate by construction
+- AMR admixed sub-populations replicate the pattern according to known ancestry proportions (within-ACB ≈ within-AFR; within-PEL ≈ within-EAS)
+
+**Conclusion:** FitCoal's specific 930 ka bottleneck parameterization (Ne=1,280 for 117 ka) is quantitatively inconsistent with the multi-population TMRCA distribution. A weaker bottleneck (Ne ≈ 2,000) or partial ancestral population structure provides a better fit.
 
 ---
 
@@ -57,69 +83,68 @@ DESI/
 ├── paper/
 │   ├── main.pdf              ← Full manuscript
 │   ├── main.tex              ← LaTeX source
-│   ├── sections/             ← Individual section files
-│   ├── figures/              ← All figures
+│   ├── sections/             ← Individual section files (abstract, intro, results, discussion, methods)
+│   ├── figures/              ← All figures (4 main figures)
 │   ├── tables/               ← LaTeX tables
 │   └── references.bib        ← Bibliography
 ├── code/
-│   ├── desi_pchmm.py         ← Core PCHMM implementation (JAX)
+│   ├── desi_pchmm.py         ← Core PWL implementation
 │   ├── desi_run_chr.py       ← Per-chromosome TMRCA estimation
 │   ├── desi_winhist_analyze.py ← Genome-wide aggregation & jackknife
-│   ├── desi_net_plot.py      ← Ne(t) curve estimation
-│   ├── desi_sim_validate.py  ← Simulation-based calibration (E1+E2)
-│   ├── desi_e5_proper.py     ← K-mixture analysis (E5)
-│   ├── desi_e6_chrjk.py      ← Per-chromosome consistency (E6)
-│   ├── desi_sensitivity.py   ← Mutation rate & AMR analysis (E7+E8)
-│   └── desi_bgs_neutral.py   ← Background selection robustness
+│   ├── desi_sim_validate.py  ← Simulation-based calibration
+│   ├── desi_subgroup_analysis.py ← Single sub-population analyses (YRI, CHB, etc.)
+│   ├── desi_sensitivity.py   ← Mutation rate & AMR analysis
+│   ├── desi_bgs_neutral.py   ← Background selection robustness
+│   ├── bottleneck_scan.py    ← 112-scenario FitCoal parameter scan
+│   ├── plot_bottleneck_scan.py ← Parameter scan heatmaps & figures
+│   └── perpair_tmrca.py      ← Per-pair TMRCA extraction from VCF
 ├── results/
-│   ├── final/                ← Full genome TMRCA results
-│   ├── winhist/              ← Per-window histogram data
-│   └── validation/           ← Simulation and robustness results
+│   ├── final/                ← Full genome TMRCA results & subgroup data
+│   ├── winhist/              ← Per-window histogram data & scan figures
+│   ├── bottleneck_scan/      ← Parameter scan results (pkl + log)
+│   └── perpair/              ← Per-pair TMRCA for chr21/22
 └── data/
-    └── annotations/          ← UCSC RefGene annotations for BGS
+    └── annotations/          ← UCSC RefGene annotations for BGS masking
 ```
 
 ---
 
 ## Method Overview
 
-### Pairwise Coalescent HMM (PCHMM)
+### Pairwise Windowed Likelihood (PWL)
 
-For each pair of haplotypes, DESI estimates a genome-wide mean TMRCA using a windowed product likelihood:
+For each 100 kb genomic window and each population group, DESI counts total heterozygous sites across all haplotype pairs and estimates mean pairwise TMRCA via MLE:
 
-- **Window size:** 100 kb
-- **Emission model:** Poisson heterozygosity count given a window-specific TMRCA
-- **Time bins:** 60 log-spaced bins spanning 10–5,000 ka
-- **Group aggregation:** All pairs within a population group are pooled per window for a single group-level MLE
+$$\hat{T}_w = \frac{n_w \cdot G}{2\,\mu\,L_w \cdot 1000}$$
+
+where $n_w$ is the aggregate heterozygous count, $L_w$ the callable window length, $\mu = 1.2 \times 10^{-8}$ per bp per generation, and $G = 28$ years per generation.
+
+### Bottleneck Parameter Scan
+
+To directly test FitCoal's parameterization, we simulated 112 combinations of:
+- **Ne_bottleneck**: 300, 500, 800, 1,280, 2,000, 4,000, 8,000, 20,000
+- **Duration**: 30, 50, 80, 117, 150, 200, 300 ka
+- **Ancestral Ne**: 20,000 or 50,000
+
+Each scenario uses the same OoA structure as the empirical data (AFR Ne=15,000, EAS Ne=3,000 post-OoA at 65 ka). Per-window TMRCAs are computed via `tskit` branch-mode diversity, directly comparable to the empirical estimates.
 
 ### Calibration
 
-Validated on `msprime` coalescent simulations across three demographic models:
-- Standard Out-of-Africa (OoA)
-- Panmictic + FitCoal severe bottleneck (Model A)
-- Cobraa-like structured model (Model D)
-
-PCHMM recovers exact tree-sequence TMRCA within **<3.5% error** in all cases.
-
-### Uncertainty estimation
-
-Block jackknife over **2,868 non-overlapping 1 Mb genomic blocks** across all 22 autosomes, making the method robust to any single chromosome or genomic region.
+Validated on `msprime` coalescent simulations across three demographic models. PWL recovers exact tree-sequence TMRCA within **<3.5% error** in all cases.
 
 ---
 
 ## Dependencies
 
 ```bash
-pip install jax jaxlib numpy scipy matplotlib msprime
+pip install numpy scipy matplotlib msprime tskit
 ```
-
-**GPU acceleration:** JAX will automatically use available GPUs (tested on NVIDIA L20).
 
 ---
 
 ## Data
 
-Whole-genome phased VCF data from the [1000 Genomes Project Phase 3](https://www.internationalgenome.org/data-portal/data-collection/30x-grch38) (30× GRCh38 re-sequencing, Byrska-Bishop et al. 2022).
+Whole-genome phased VCF data from the [1000 Genomes Project](https://www.internationalgenome.org/data-portal/data-collection/30x-grch38) (30× GRCh38, Byrska-Bishop et al. 2022). Data files are not included in this repository due to size.
 
 ---
 
