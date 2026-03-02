@@ -3,8 +3,8 @@
 
 \begin{table}[h!]
 \centering
-\caption{\textbf{PCHMM calibration and model predictions from coalescent simulations.}
-Results from three demographic models simulated in \texttt{msprime} (50~Mb, three replicates each; seeds 42/123/456). Exact: mean pairwise TMRCA from tree sequences. PCHMM: windowed likelihood estimate. Error = (PCHMM$-$Exact)/Exact. Observed genome-wide values from 1000 Genomes (this study). AFR, African; EAS, East Asian.}
+\caption{\textbf{PWL calibration and model predictions from coalescent simulations.}
+Results from three demographic models simulated in \texttt{msprime} (50~Mb, three replicates each; seeds 42/123/456). Exact: mean pairwise TMRCA from tree sequences. PWL: windowed likelihood estimate. Error = (PWL$-$Exact)/Exact. Observed genome-wide values from 1000 Genomes (this study). AFR, African; EAS, East Asian.}
 \label{tab:calibration}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -14,7 +14,7 @@ Results from three demographic models simulated in \texttt{msprime} (50~Mb, thre
 \toprule
 \textbf{Model} & \multicolumn{2}{c}{\textbf{AFR (ka)}} & \multicolumn{2}{c}{\textbf{EAS (ka)}} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
- & Exact & PCHMM (\% err) & Exact & PCHMM (\% err) \\
+ & Exact & PWL (\% err) & Exact & PWL (\% err) \\
 \midrule
 Model OoA              & 845.1 & 864.8 ($+2.2\%$) & 381.3 & 379.8 ($-0.4\%$) \\
 Model A (panmictic)    & 467.7 & 457.7 ($-2.1\%$) & 467.4 & 457.2 ($-2.2\%$) \\
@@ -29,7 +29,7 @@ Model D (reduced $\Ne$) & 695.4 & 718.7 ($+3.3\%$) & 325.4 & 322.2 ($-1.0\%$) \\
 % --- Panel B: AFR-EAS differences ---
 \begin{tabular}{lrrc}
 \toprule
-\textbf{Model} & \textbf{Diff exact (ka)} & \textbf{Diff PCHMM (ka)} & \textbf{Note} \\
+\textbf{Model} & \textbf{Diff exact (ka)} & \textbf{Diff PWL (ka)} & \textbf{Note} \\
 \midrule
 Model OoA              & 463.9          & 484.2 & OoA only; overpredicts \\
 Model A (panmictic)    & \textbf{0.2}   & 0.5   & Panmixia: $\approx$0 \\
